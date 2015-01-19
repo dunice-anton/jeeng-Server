@@ -1,4 +1,5 @@
-exports.getProductBestBuy = function (productRequest, callback){
+exports.getProduct= function (productRequest, callback){
+    console.log('best');
     var request = require('request');
     var productResponse = require('../productResponse');
     var apiKey = "p9kvbe5mhrwegbake2zkc64b";
