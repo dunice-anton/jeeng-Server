@@ -1,5 +1,4 @@
 exports.getProduct= function (productRequest, callback){
-    console.log('best');
     var request = require('request');
     var productResponse = require('../productResponse');
     var apiKey = "p9kvbe5mhrwegbake2zkc64b";
@@ -24,8 +23,8 @@ exports.getProduct= function (productRequest, callback){
                     products[i][element] =  json_data.products[i][element];
                 });
             }
-            callback (products);
         }
+        callback (products);
     });
 };
 
@@ -37,4 +36,6 @@ exports.getProduct= function (productRequest, callback){
 
 //Returns all reviews
 //http://api.remix.bestbuy.com/v1/reviews?format=json&apiKey=YourAPIKey
+
+
 
