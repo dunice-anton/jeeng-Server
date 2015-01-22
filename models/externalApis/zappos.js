@@ -1,24 +1,27 @@
+var request = require('request')
+    ,async = require('async')
+    , Q = require('Q');
+
 exports.getProduct  = function (productRequest, callback){
-    var request = require('request')
-        , productResponse = require('../productResponse')
-        , apiKey = ""
-        , showSearch = ["description", "videoUrl", "videoFileName", "videoUploadedDate", "productRating", "brandId",
-                  "categoryFacet", "heelHeight", "subCategoryFacet", "txAttrFacet_Gender"]
-        , showProduct = ["defaultPrettyProductUrl", "description", "gender", "weight", "videos", "videoFileName",
-                         "videoUrl", "videoUploadedDate", "sizeFit", "widthFit", "archFit", "productRating",
-                         "overallRating", "comfortRating", "lookRating", "styles", "isNew", "measurements",
-                         "defaultCategory", "defaultSubCategory", "attributeFacetFields"]
-        , showImage = ["colorId", "width", "height", "uploadDate", "isHighResolution", "tiles"]
-        , url = 'http://api.zappos.com/Search/term/' + productRequest.productName + '?includes=[' + showSearch.join() + ']&key=' + apiKey
-        ,urlProduct
-        ,urlImage
-        , productData = [];
+    var productResponse = require('../productResponse')
+    , apiKey = ""
+    , showSearch = ["description", "videoUrl", "videoFileName", "videoUploadedDate", "productRating", "brandId",
+        "categoryFacet", "heelHeight", "subCategoryFacet", "txAttrFacet_Gender"]
+    , showProduct = ["defaultPrettyProductUrl", "description", "gender", "weight", "videos", "videoFileName",
+        "videoUrl", "videoUploadedDate", "sizeFit", "widthFit", "archFit", "productRating",
+        "overallRating", "comfortRating", "lookRating", "styles", "isNew", "measurements",
+        "defaultCategory", "defaultSubCategory", "attributeFacetFields"]
+    , showImage = ["colorId", "width", "height", "uploadDate", "isHighResolution", "tiles"]
+    , url = 'http://api.zappos.com/Search/term/' + productRequest.productName + '?includes=[' + showSearch.join() + ']&key=' + apiKey
+    ,urlProduct
+    ,urlImage
+    , productsResult = [];
 
     request(url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             var json_data = JSON.parse(body)
                 , products = [];
-            for (var i = 0; i < json_data.products.length; i++){
+            for (var i = 0; i < json_data.products.length; i++) {
                 products[i] = new productResponse();
                 //store name
                 products[i].storeName = "Zappos";
@@ -62,97 +65,108 @@ exports.getProduct  = function (productRequest, callback){
                 products[i].subCategoryFacet = json_data.results[i].subCategoryFacet;
                 //Facet Gender
                 products[i].txAttrFacet_Gender = json_data.results[i].txAttrFacet_Gender;
+            }
 
-                urlProduct = 'http://api.zappos.com/Product/id/' + products[i].productId + '?includes=[' + showProduct.join() + ']&key=' + apiKey;
-                urlImage = 'http://api.zappos.com/Image?productId=' + products[i].productId + '?includes=[' + showImage.join() + ']&key=' + apiKey;
+            var getAdditionProps = function () {
+                var deferred = Q.defer()
+                    , curProduct = products.shift();
+
+                urlProduct = 'http://api.zappos.com/Product/id/' + curProduct.productId + '?includes=[' + showProduct.join() + ']&key=' + apiKey;
+                urlImage = 'http://api.zappos.com/Image?productId=' + curProduct.productId + '?includes=[' + showImage.join() + ']&key=' + apiKey;
 
                 async.parallel([
-                    function(callback){
+                    function (callback) {
                         request(urlProduct, function (error, response, body){
-                            if (!error && response.statusCode == 200) {
-                                var json_data = JSON.parse(body)
-                                    , products = {};
-                                for (var i = 0; i < json_data.products.length; i++){
-                                    //default product URl
-                                    products.defaultProductUrl = json_data.product.defaultProductUrl;
-                                    //default pretty product URL
-                                    products.defaultPrettyProductUrl = json_data.product.defaultPrettyProductUrl;
-                                    //default image URL
-                                    products.defaultImageUrl = json_data.product.defaultImageUrl;
-                                    //product gender
-                                    products.gender = json_data.product.gender;
-                                    //products weight
-                                    products.weight = json_data.product.weight;
-                                    //products video
-                                    products.videos = json_data.product.videos;
-                                    //products szxe Fit
-                                    products.sizeFit = json_data.product.sizeFit;
-                                    //products width Fit
-                                    products.widthFit = json_data.product.widthFit;
-                                    //arch Fit
-                                    products.archFit = json_data.product.archFit;
-                                    //overall Rating
-                                    products.overallRating = json_data.product.overallRating;
-                                    //comfort Rating
-                                    products.comfortRating = json_data.product.comfortRating;
-                                    //look Rating
-                                    products.lookRating = json_data.product.lookRating ;
-                                    //products style
-                                    products.styles = json_data.product.styles;
-                                    //products isNeww
-                                    products.isNew = json_data.product.isNew;
-                                    //products measurements
-                                    products.measurements = json_data.product.measurements;
-                                    //products type
-                                    products.defaultProductType = json_data.product.defaultProductType;
-                                    //default products type
-                                    products.defaultCategory = json_data.product.defaultCategory;
-                                    //default products sub categories
-                                    products.defaultSubCategory = json_data.product.defaultSubCategory;
-                                    //
-                                    products.attributeFacetFields = json_data.product.attributeFacetFields;
+                                if (!error && response.statusCode == 200) {
+                                    var first_data = JSON.parse(body);
                                 }
-                            }
-                            callback (products);
-                        })
+                                callback (null, first_data);
+                            })
                     },
-                    function(callback){
+                    function (callback) {
                         request(url, function (error, response, body){
                             if (!error && response.statusCode == 200) {
-                                var json_data = JSON.parse(body)
-                                    , products = {};
-                                for (var i = 0; i < json_data.products.length; i++){
-                                    products.type = json_datas.images.type;
-                                    //image type
-                                    products.recipeName = json_datas.images.recipeName;
-                                    //recipe name
-                                    products.format = json_datas.images.format;
-                                    //format
-                                    products.filename = json_datas.images.filename;
-                                    //color ID
-                                    products.colorId = json_datas.images.colorId;
-                                    //width
-                                    products.width = json_datas.images.width;
-                                    //height
-                                    products.height = json_datas.images.height;
-                                    //upload data
-                                    products.uploadDate = json_datas.images.uploadDate;
-                                    //Resolution
-                                    products.isHighResolution = json_datas.images.isHighResolution;
-                                    //title
-                                    products.tiles = json_datas.images.tiles;
-                                }
+                                var second_data = JSON.parse(body);
                             }
-                            callback (products);
+                            callback (null, second_data );
                         })
                     }],
-                function(err, results){
-                    productData.push(results)
+                function (err, results) {
+                    //default product URl
+                    curProduct.defaultProductUrl = results[0].product.defaultProductUrl;
+                    //default pretty product URL
+                    curProduct.defaultPrettyProductUrl = results[0].product.defaultPrettyProductUrl;
+                    //default image URL
+                    curProduct.defaultImageUrl = results[0].product.defaultImageUrl;
+                    //product gender
+                    curProduct.gender = results[0].product.gender;
+                    //products weight
+                    curProduct.weight = results[0].product.weight;
+                    //products video
+                    curProduct.videos = results[0].product.videos;
+                    //products szxe Fit
+                    curProduct.sizeFit = results[0].product.sizeFit;
+                    //products width Fit
+                    curProduct.widthFit = results[0].product.widthFit;
+                    //arch Fit
+                    curProduct.archFit = results[0].product.archFit;
+                    //overall Rating
+                    curProduct.overallRating = results[0].product.overallRating;
+                    //comfort Rating
+                    curProduct.comfortRating = results[0].product.comfortRating;
+                    //look Rating
+                    curProduct.lookRating = results[0].product.lookRating ;
+                    //products style
+                    curProduct.styles = results[0].product.styles;
+                    //products isNeww
+                    curProduct.isNew = results[0].product.isNew;
+                    //products measurements
+                    curProduct.measurements = results[0].product.measurements;
+                    //products type
+                    curProduct.defaultProductType = results[0].product.defaultProductType;
+                    //default products type
+                    curProduct.defaultCategory = results[0].product.defaultCategory;
+                    //default products sub categories
+                    curProduct.defaultSubCategory = results[0].product.defaultSubCategory;
+                    //attribute facet field
+                    curProduct.attributeFacetFields = results[0].product.attributeFacetFields;
+                    //image type
+                    curProduct.type = results[1].images.type;
+                    //recipe name
+                    curProduct.recipeName = results[1].images.recipeName;
+                    //format
+                    curProduct.format = results[1].images.format;
+                    //image file name
+                    curProduct.filename = results[1].images.filename;
+                    //color ID
+                    curProduct.colorId = results[1].images.colorId;
+                    //width
+                    curProduct.width = results[1].images.width;
+                    //height
+                    curProduct.height = results[1].images.height;
+                    //upload data
+                    curProduct.uploadDate = results[1].images.uploadDate;
+                    //Resolution
+                    curProduct.isHighResolution = results[1].images.isHighResolution;
+                    //title
+                    curProduct.tiles = results[1].images.tiles;
+
+                    deferred.resolve(curProduct);
+                    //deferred.reject();
                 });
-                products[i].push(productData);
-            }
+
+                return deferred.promise;
+            };
+
+            var success = function (product) {
+                productsResult.push(product);
+                if (products.length) getAdditionProps().then(success);
+                else callback(productsResult);
+            };
+
+            getAdditionProps().then(success)
         }
-        callback (products);
+        else callback();
     });
 };
 
