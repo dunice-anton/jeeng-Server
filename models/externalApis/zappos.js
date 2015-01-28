@@ -1,9 +1,9 @@
-var request = require('request')
-    ,async = require('async')
-    , Q = require('Q');
+var request = require ('request')
+    ,async = require ('async')
+    , Q = require ('Q');
 
-exports.getProduct  = function (productRequest, callback){
-    var productResponse = require('../productResponse')
+exports.getProduct  = function (productRequest, callback) {
+    var productResponse = require ('../productResponse')
     , apiKey = ""
     , showSearch = ["description", "videoUrl", "videoFileName", "videoUploadedDate", "productRating", "brandId",
         "categoryFacet", "heelHeight", "subCategoryFacet", "txAttrFacet_Gender"]
@@ -13,14 +13,14 @@ exports.getProduct  = function (productRequest, callback){
         "defaultCategory", "defaultSubCategory", "attributeFacetFields"]
     , showImage = ["colorId", "width", "height", "uploadDate", "isHighResolution", "tiles"]
     , url = 'http://api.zappos.com/Search/term/' + productRequest.productName + '?includes=[' + showSearch.join() + ']&key=' + apiKey
-    ,urlProduct
-    ,urlImage
+    , urlProduct
+    , urlImage
     , productsResult = [];
 
-    request(url, function (error, response, body) {
+    request (url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             var json_data = JSON.parse(body)
-                , products = [];
+                , products = {};
             for (var i = 0; i < json_data.products.length; i++) {
                 products[i] = new productResponse();
                 //store name
@@ -76,15 +76,15 @@ exports.getProduct  = function (productRequest, callback){
 
                 async.parallel([
                     function (callback) {
-                        request(urlProduct, function (error, response, body){
-                                if (!error && response.statusCode == 200) {
-                                    var first_data = JSON.parse(body);
-                                }
-                                callback (null, first_data);
+                        request(urlProduct, function (error, response, body) {
+                            if (!error && response.statusCode == 200) {
+                                var first_data = JSON.parse(body);
+                            }
+                            callback (null, first_data);
                             })
                     },
                     function (callback) {
-                        request(url, function (error, response, body){
+                        request(url, function (error, response, body) {
                             if (!error && response.statusCode == 200) {
                                 var second_data = JSON.parse(body);
                             }
@@ -187,3 +187,6 @@ exports.getProduct  = function (productRequest, callback){
 
 //Similarity New & BETA!	Want to find out what products look or are similar to a given style? Now you can!
 //http://api.zappos.com/Search/Similarity?type=visualSearch&limit=5&styleId=<STYLE_ID>[&emphasis=<OPTIONS>]&key=<YourApiKey>
+
+
+

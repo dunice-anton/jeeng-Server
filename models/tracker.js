@@ -1,7 +1,8 @@
 ﻿var services = [
-        require('./externalApis/bestBuy'),
-        require('./externalApis/zappos')
-    ];
+    require('./externalApis/bestBuy')
+    ,require('./externalApis/zappos')
+    ,require('./externalApis/crunchbase')
+];
 
 exports.getTrackList = function(callback) {
     var productRequest = require('./productRequest')
@@ -9,9 +10,10 @@ exports.getTrackList = function(callback) {
         , async_count = 0;
 
     productRequest = new productRequest();
-    productRequest.productName = "macbook pro";
+    productRequest.productName = "mac";
     productRequest.productModel = "MGX82LL/A";
-
+    productRequest.companyName = '';
+    productRequest.personName = '';
 
     services.forEach(function(service){
         service.getProduct(productRequest, function(product){
