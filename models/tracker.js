@@ -25,6 +25,21 @@ exports.getTrackList = function(callback) {
         });
     });
 
+    services[2].getCompany(productRequest, function(company){
+        jsonParse.push.apply(jsonParse, company);
+        async_count++;
+        if (async_count == services.length+2){
+            callback(jsonParse);
+        }
+    });
+
+    services[2].getPerson(productRequest, function(person){
+        jsonParse.push.apply(jsonParse, person);
+        async_count++;
+        if (async_count == services.length+2){
+            callback(jsonParse);
+        }
+    })
 };
 
 
