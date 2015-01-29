@@ -1,9 +1,7 @@
 ﻿var services = [
     require('./externalApis/bestBuy')
     ,require('./externalApis/zappos')
-    ,require('./externalApis/crunchbase_product')
-    ,require('./externalApis/crunchbase_person')
-    ,require('./externalApis/crunchbase_company')
+    ,require('./externalApis/crunchbase')
 ];
 
 exports.getTrackList = function(callback) {
