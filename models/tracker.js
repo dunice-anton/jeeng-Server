@@ -19,7 +19,7 @@ exports.getTrackList = function(callback) {
         service.getProduct(productRequest, function(product){
             jsonParse.push.apply(jsonParse, product);
             async_count++;
-            if (async_count == services.length){
+            if (async_count == services.length+2){
                 callback(jsonParse);
             }
         });
