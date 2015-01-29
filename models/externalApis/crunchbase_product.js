@@ -40,6 +40,21 @@ exports.getProduct  = function (productRequest, callback) {
     });
 };
 
+//FundingRound. This operation returns the properties and relationships of the Funding Round for the given uuid.
+//https://api.crunchbase.com/v/2/funding-round/<uuid>?user_key=<apiKey>
 
+//Acquisition. This operation returns the properties and relationships of the Acquisition for the given uuid.
+//https://api.crunchbase.com/v/2/acquisition/{uuid}?user_key=<apiKey>
 
+//IPO. This operation returns the properties and relationships of the IPO for the given uuid.
+//https://api.crunchbase.com/v/2/ipo/{uuid}?user_key=<apiKey>
+
+//FundRaise. This operation returns the properties and relationships of the Fund Raise for the given uuid.
+//https://api.crunchbase.com/v/2/fund-raise/{uuid}?user_key=<apiKey>
+
+//Locations. This operation returns a paginated list of all active Locations in CrunchBase.
+//https://api.crunchbase.com/v/2/locations?user_key=<apiKey>&page=1"
+
+//Categories. This operation returns a paginated list of all active Categories in CrunchBase.
+//https://api.crunchbase.com/v/2/categories?user_key=<apiKey>&page=1
 
