@@ -1,7 +1,9 @@
 ﻿var services = [
     require('./externalApis/bestBuy')
     ,require('./externalApis/zappos')
-    ,require('./externalApis/crunchbase')
+    ,require('./externalApis/crunchbase_product')
+    ,require('./externalApis/crunchbase_person')
+    ,require('./externalApis/crunchbase_company')
 ];
 
 exports.getTrackList = function(callback) {
@@ -12,8 +14,8 @@ exports.getTrackList = function(callback) {
     productRequest = new productRequest();
     productRequest.productName = "mac";
     productRequest.productModel = "MGX82LL/A";
-    productRequest.companyName = '';
-    productRequest.personName = '';
+    productRequest.companyName = 'apple';
+    productRequest.personName = 'steven-owen';
 
     services.forEach(function(service){
         service.getProduct(productRequest, function(product){
@@ -26,3 +28,5 @@ exports.getTrackList = function(callback) {
     });
 
 };
+
+
